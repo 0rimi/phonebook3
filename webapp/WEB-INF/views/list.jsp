@@ -35,7 +35,7 @@
 					<a href="/phonebook3/phone/updateForm?no=${vo.personId }">수정하기</a>
 				</td>
 				<td>
-					<a href="/phonebook3/phone/delete">삭제하기</a>
+					<a href="/phonebook3/phone/delete?no=${vo.personId }">삭제하기</a>
 				</td>
 			</tr>
 		</table>

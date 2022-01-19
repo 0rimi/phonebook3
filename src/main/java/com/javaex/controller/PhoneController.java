@@ -90,13 +90,15 @@ public class PhoneController {
 	}
 	
 	@RequestMapping(value="/delete", method= {RequestMethod.GET, RequestMethod.POST})
-	public String delete(@ModelAttribute PersonVo personVo) {
+	public String deleteForm(@RequestParam("no") String no) {
 		System.out.println("PhoneController > delete");
 		
-		System.out.println(personVo);
+		//파라미터 값 가져오기 id값
+		int id = Integer.parseInt(no);
 		
+		//삭제할 값불러와서 personDelete 해주기
 		PhoneDao phoneDao = new PhoneDao();
-		phoneDao.personInsert(personVo);
+		phoneDao.personDelete(id);
 		
 		//리다이렉트
 		return "redirect:/phone/list";	
