@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +17,8 @@ import com.javaex.vo.PersonVo;
 @RequestMapping(value="/phone")
 public class PhoneController {
 	
-	//필드
+	//필드(공통으로 쓰는 phoneDao빼주기)
+	private PhoneDao phoneDao = new PhoneDao();
 	
 	//생성자
 	
@@ -27,7 +29,7 @@ public class PhoneController {
 	public String writeForm() {
 		System.out.println("PhoneController > writeForm");
 		
-		return "/WEB-INF/views/writeForm.jsp";
+		return "writeForm";
 	}
 	
 	//파라미터를 직접 갖다 쓸수가 없음 frontController에서 받아오는작업필요
@@ -37,7 +39,6 @@ public class PhoneController {
 		
 		System.out.println(personVo);
 		
-		PhoneDao phoneDao = new PhoneDao();
 		phoneDao.personInsert(personVo);
 		
 		//리다이렉트
@@ -49,7 +50,6 @@ public class PhoneController {
 		System.out.println("PhoneController > list");
 		
 		//다오에서 리스트를 가져온다
-		PhoneDao phoneDao = new PhoneDao();
 		List<PersonVo> pList = phoneDao.getPersonList();
 		System.out.println(pList.toString());
 		
@@ -58,7 +58,7 @@ public class PhoneController {
 		model.addAttribute("pList", pList);
 		
 		//jsp정보를 리턴한다.(view)
-		return "/WEB-INF/views/list.jsp";
+		return "list";
 	}
 	
 	@RequestMapping(value="/updateForm", method= {RequestMethod.GET, RequestMethod.POST})
@@ -67,14 +67,13 @@ public class PhoneController {
 		
 		//원래 코드값으로부터 정보 불러와서 미리 넣어주는 getPerson이용
 		int id = Integer.parseInt(no);
-		PhoneDao phoneDao = new PhoneDao();
 		PersonVo pinfo = phoneDao.getPerson(id);
 				
 		//mvc패턴 : 모델, 컨트롤러, 뷰
 		//컨트롤러 > DS데이터를 보낸다(model)
 		model.addAttribute("pinfo", pinfo);
 		
-		return "/WEB-INF/views/updateForm.jsp";
+		return "updateForm";
 	}
 	
 	@RequestMapping(value="/update", method= {RequestMethod.GET, RequestMethod.POST})
@@ -82,7 +81,6 @@ public class PhoneController {
 		System.out.println("PhoneController > update");
 		
 		//수정할 값불러와서 personUpdate 해주기
-		PhoneDao phoneDao = new PhoneDao();
 		phoneDao.personUpdate(personVo);
 		
 		//리다이렉트
@@ -96,15 +94,24 @@ public class PhoneController {
 		//파라미터 값 가져오기 id값
 		int id = Integer.parseInt(no);
 		
-		//삭제할 값불러와서 personDelete 해주기
-		PhoneDao phoneDao = new PhoneDao();
+		//삭제할 값불러와서 personDelete 해주기		
 		phoneDao.personDelete(id);
 		
 		//리다이렉트
 		return "redirect:/phone/list";	
 	}
 	
-	/*
+	@RequestMapping(value="/test", method= {RequestMethod.GET, RequestMethod.POST})
+	public String test(@RequestParam(value="name") String name,
+					   @RequestParam(value="age",required=false, defaultValue="-1") int age) {		
+									//혹시나 param값이 없으면 만들어서라도 받아줘, 연결해줘
+		System.out.println(name);
+		System.out.println(age);
+		
+		return "writeForm";
+	}
+	
+		/*
 	//파라미터를 직접 갖다 쓸수가 없음 frontController에서 받아오는작업필요
 	@RequestMapping(value="/phone/write", method= {RequestMethod.GET, RequestMethod.POST})
 	public String write(@RequestParam("name") String name,
@@ -125,4 +132,32 @@ public class PhoneController {
 		return "";	
 	}
 	*/
+								//파라미터사용
+	@RequestMapping(value="/view", method= {RequestMethod.GET, RequestMethod.POST})
+	public String view(@RequestParam(value="no") int no) {		
+									
+		System.out.println("@RequestParam");
+		System.out.println(no+"번 글 가져오기");
+		
+		return "writeForm";
+	}
+								//주소를 변수화 하고싶어, 파라미터는 아님!
+	@RequestMapping(value="/view/{no}", method= {RequestMethod.GET, RequestMethod.POST})
+	public String view11(@PathVariable("no") int no) {		
+				
+		System.out.println("PathVariable");
+		System.out.println(no+"번 글 가져오기");
+		
+		return "writeForm";
+	}
+	
+	@RequestMapping(value="/view/{id}", method= {RequestMethod.GET, RequestMethod.POST})
+	public String view13(@PathVariable("id") String id) {		
+				
+		System.out.println(id+"의 블로그입니다.");		
+		
+		return "writeForm";
+	}
+	
+
 }
